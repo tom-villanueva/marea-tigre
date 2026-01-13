@@ -30,6 +30,12 @@ const Components = {
           container.appendChild(p);
 
           const text = desc.toLowerCase();
+
+          // If it's the "no alerts" message, keep it as info (green)
+          if (text.includes("no hay") || text.includes("ningún")) {
+            return;
+          }
+
           if (text.includes("alerta")) alertLevel = "danger";
           else if (text.includes("naranja") && alertLevel !== "danger")
             alertLevel = "orange";

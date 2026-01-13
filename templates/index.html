@@ -203,6 +203,32 @@
           </div>
         </section>
 
+        <!-- ==================== FORECAST ==================== -->
+        <section
+          class="card card-collapsible"
+          id="card-forecast"
+          data-panel-id="forecast"
+        >
+          <div class="card-header">
+            <span class="card-title">
+              <i data-lucide="trending-up" class="icon"></i>
+              Pronóstico de Marea
+            </span>
+            <span class="card-toggle">▼</span>
+          </div>
+          <div class="card-body" style="text-align: center">
+            <img
+              id="forecast-img"
+              class="forecast-image"
+              src="https://alerta.ina.gob.ar/ina/42-RIODELAPLATA/productos/Prono_SanFernando.png"
+              alt="Pronóstico San Fernando"
+            />
+            <p class="forecast-source">
+              Fuente: INA - Actualizada cada 6 horas
+            </p>
+          </div>
+        </section>
+
         <!-- PILOTE NORDEN -->
         <section
           class="card card-collapsible"
@@ -256,30 +282,6 @@
           </div>
         </section>
       </div>
-
-      <!-- ==================== FORECAST ==================== -->
-      <section
-        class="card card-collapsible"
-        id="card-forecast"
-        data-panel-id="forecast"
-      >
-        <div class="card-header">
-          <span class="card-title">
-            <i data-lucide="trending-up" class="icon"></i>
-            Pronóstico de Marea
-          </span>
-          <span class="card-toggle">▼</span>
-        </div>
-        <div class="card-body" style="text-align: center">
-          <img
-            id="forecast-img"
-            class="forecast-image"
-            src="https://alerta.ina.gob.ar/ina/42-RIODELAPLATA/productos/Prono_SanFernando.png"
-            alt="Pronóstico San Fernando"
-          />
-          <p class="forecast-source">Fuente: INA - Actualizada cada 6 horas</p>
-        </div>
-      </section>
 
       <!-- ==================== EMERGENCY CONTACTS ==================== -->
       <section
@@ -425,9 +427,9 @@
       <!-- ==================== FOOTER ==================== -->
       <footer class="dashboard-footer">
         <p>Marea Tigre &copy; 2026 - Datos actualizados cada 5 minutos</p>
-        <p class="footer-credit">
-          Hecho con amor por
-          <a href="https://github.com/tom-villanueva" target="_blank">Tom</a>
+        <p class="footer-credit" style="margin-top: var(--spacing-sm)">
+          - Con amor,
+          <a href="https://github.com/tom-villanueva" target="_blank">Tom</a> -
         </p>
       </footer>
     </div>

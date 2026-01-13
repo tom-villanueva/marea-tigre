@@ -168,6 +168,11 @@ body {
   gap: var(--spacing-md);
 }
 
+/* Make last item span full width if alone on row */
+.grid-two-col > :last-child:nth-child(odd) {
+  grid-column: span 2;
+}
+
 .grid-three-col {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -818,6 +823,11 @@ body {
   .grid-two-col,
   .grid-three-col {
     grid-template-columns: 1fr;
+  }
+
+  /* Reset span on mobile */
+  .grid-two-col > :last-child:nth-child(odd) {
+    grid-column: auto;
   }
 
   .pilote-grid {
