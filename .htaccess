@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Prevent direct access to the src and data folders
+    RewriteRule ^(src|data|templates) - [F,L]
+
+    # If the file exists (images, css), serve it directly
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Otherwise, pass everything to index.php
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>

@@ -1,0 +1,34 @@
+# PHP
+vendor/
+composer.lock
+
+# Data files (generated/cached)
+data/*.json
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cache
+cache/
+tmp/
+*.cache
+
+# Build/Deploy
+dist/
+build/

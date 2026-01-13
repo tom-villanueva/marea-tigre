@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+    />
+    <meta name="theme-color" content="#0f172a" />
+
+    <title>Marea Tigre - Monitor del Río de la Plata</title>
+
+    <!-- Favicons -->
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon" />
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/static/apple-touch-icon.png"
+    />
+    <link rel="manifest" href="/static/manifest.json" />
+
+    <!-- Meta tags -->
+    <meta
+      name="description"
+      content="Monitoreo en tiempo real del Río de la Plata. Alturas, mareas, viento y alertas para San Fernando, Tigre y Delta."
+    />
+    <meta name="application-name" content="Marea Tigre" />
+    <meta name="apple-mobile-web-app-title" content="Marea Tigre" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icons - Lucide (lightweight) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/main.css" />
+  </head>
+  <body>
+    <div class="dashboard">
+      <!-- ==================== HEADER ==================== -->
+      <header class="dashboard-header">
+        <div class="dashboard-title">
+          <i data-lucide="waves" class="header-icon"></i>
+          <h1>Marea Tigre</h1>
+        </div>
+        <div class="dashboard-time">
+          <div class="live-indicator">
+            <span class="live-dot"></span>
+            <span>EN VIVO</span>
+          </div>
+          <span id="live-clock">--:--</span>
+        </div>
+      </header>
+
+      <!-- ==================== ALERTAS (Main Feature) ==================== -->
+      <section class="card card-alert" id="card-alertas">
+        <div class="card-header card-header-fixed">
+          <span class="card-title">
+            <i data-lucide="alert-triangle" class="icon"></i>
+            AVISOS Y ALERTAS
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="alert-content" id="alertas-content">
+            <p class="loading">Cargando avisos...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SUDESTADA (Emergency Panel - Hidden by default) ==================== -->
+      <section
+        class="card card-sudestada"
+        id="card-sudestada"
+        style="display: none"
+      >
+        <div class="card-header card-header-fixed">
+          <span class="card-title">
+            <i data-lucide="siren" class="icon"></i>
+            SUDESTADA DETECTADA - PREDICCIÓN TIGRE
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="sudestada-content">
+            <div class="sudestada-peak" id="sudestada-pico">-</div>
+            <div class="sudestada-subtitle">
+              Pico máximo registrado en Pilote Norden
+            </div>
+
+            <div class="sudestada-comparison">
+              <div class="sudestada-station">
+                <div class="sudestada-station-name">
+                  <i data-lucide="compass" class="icon-sm"></i> PILOTE NORDEN
+                </div>
+                <div class="sudestada-station-time" id="sudestada-hora-pilote">
+                  -
+                </div>
+                <div
+                  class="sudestada-station-height"
+                  id="sudestada-altura-pilote"
+                >
+                  - m
+                </div>
+              </div>
+
+              <div class="sudestada-arrow">
+                <span class="arrow">→</span>
+                <span>3.5 h</span>
+                <span>+35 cm</span>
+              </div>
+
+              <div class="sudestada-station">
+                <div class="sudestada-station-name">
+                  <i data-lucide="map-pin" class="icon-sm"></i> TIGRE (ESTIMADO)
+                </div>
+                <div class="sudestada-station-time" id="sudestada-hora-tigre">
+                  -
+                </div>
+                <div
+                  class="sudestada-station-height highlight"
+                  id="sudestada-altura-tigre"
+                >
+                  - m
+                </div>
+              </div>
+            </div>
+
+            <div class="sudestada-note">
+              <strong
+                ><i data-lucide="info" class="icon-xs"></i> Predicción basada en
+                experiencia local:</strong
+              ><br />
+              • Altura Tigre ≈ Altura Pilote + 35 cm<br />
+              • Pico en Tigre ≈ 3.5 horas después del pico en Pilote<br />
+              <span style="color: var(--accent-red)"
+                >• Panel visible por 4 horas después del pico</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== MAIN GRID ==================== -->
+      <div class="grid-two-col">
+        <!-- SAN FERNANDO -->
+        <section
+          class="card card-metric card-collapsible"
+          id="card-san-fernando"
+          data-panel-id="san-fernando"
+        >
+          <div class="card-header">
+            <span class="card-title">
+              <i data-lucide="waves" class="icon"></i>
+              Altura Río - San Fernando
+            </span>
+            <span class="card-toggle">▼</span>
+          </div>
+          <div class="card-body">
+            <div class="metric-main">
+              <div class="metric-icon" id="sf-tendencia-icono">
+                <i data-lucide="minus" class="tendency-icon"></i>
+              </div>
+              <div class="metric-data">
+                <div class="metric-value">
+                  <span id="sf-altura">-</span>
+                  <small>metros</small>
+                </div>
+                <div class="metric-label" id="sf-tendencia-label">
+                  Cargando...
+                </div>
+                <div class="metric-change neutral" id="sf-cambio">±0.00 m</div>
+              </div>
+            </div>
+
+            <div class="metric-details">
+              <div class="metric-detail">
+                <span class="metric-detail-label">
+                  <i data-lucide="calendar" class="icon-xs"></i> Hora
+                  actualización SHN
+                </span>
+                <span class="metric-detail-value" id="sf-hora">-</span>
+              </div>
+              <div class="metric-detail">
+                <span class="metric-detail-label">
+                  <i data-lucide="refresh-cw" class="icon-xs"></i> Sistema
+                  actualizado
+                </span>
+                <span class="metric-detail-value" id="sf-updated">-</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PILOTE NORDEN -->
+        <section
+          class="card card-collapsible"
+          id="card-pilote"
+          data-panel-id="pilote"
+        >
+          <div class="card-header">
+            <span class="card-title">
+              <i data-lucide="compass" class="icon"></i>
+              Pilote Norden
+            </span>
+            <span class="card-toggle">▼</span>
+          </div>
+          <div class="card-body">
+            <div class="pilote-grid">
+              <div class="pilote-item">
+                <div class="pilote-item-label">
+                  <i data-lucide="calendar" class="icon-xs"></i> Fecha / Hora
+                </div>
+                <div class="pilote-item-value" id="pilote-datetime">-</div>
+              </div>
+
+              <div class="pilote-item">
+                <div class="pilote-item-label">
+                  <i data-lucide="waves" class="icon-xs"></i> Altura marea
+                </div>
+                <div class="pilote-item-value" id="pilote-tide">-</div>
+              </div>
+
+              <div class="pilote-item">
+                <div class="pilote-item-label">
+                  <i data-lucide="wind" class="icon-xs"></i> Velocidad viento
+                </div>
+                <div class="pilote-item-value" id="pilote-wind-speed">-</div>
+              </div>
+
+              <div class="pilote-item">
+                <div class="pilote-item-label">
+                  <i data-lucide="compass" class="icon-xs"></i> Dirección viento
+                </div>
+                <div class="pilote-item-value">
+                  <div class="wind-direction-display">
+                    <span class="wind-arrow" id="wind-arrow">
+                      <i data-lucide="arrow-down" class="wind-arrow-icon"></i>
+                    </span>
+                    <span id="pilote-wind-dir">-</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ==================== FORECAST ==================== -->
+      <section
+        class="card card-collapsible"
+        id="card-forecast"
+        data-panel-id="forecast"
+      >
+        <div class="card-header">
+          <span class="card-title">
+            <i data-lucide="trending-up" class="icon"></i>
+            Pronóstico de Marea
+          </span>
+          <span class="card-toggle">▼</span>
+        </div>
+        <div class="card-body" style="text-align: center">
+          <img
+            id="forecast-img"
+            class="forecast-image"
+            src="https://alerta.ina.gob.ar/ina/42-RIODELAPLATA/productos/Prono_SanFernando.png"
+            alt="Pronóstico San Fernando"
+          />
+          <p class="forecast-source">Fuente: INA - Actualizada cada 6 horas</p>
+        </div>
+      </section>
+
+      <!-- ==================== EMERGENCY CONTACTS ==================== -->
+      <section
+        class="card card-emergency card-collapsible collapsed"
+        id="card-emergency"
+        data-panel-id="emergency"
+      >
+        <div class="card-header collapsed">
+          <span class="card-title">
+            <i data-lucide="phone" class="icon"></i>
+            EMERGENCIAS Y ENLACES
+          </span>
+          <span class="card-toggle">▶</span>
+        </div>
+        <div class="card-body collapsed">
+          <!-- Emergency Box -->
+          <div class="emergency-box">
+            <h4>
+              <i data-lucide="alert-octagon" class="icon-sm"></i> EN CASO DE
+              INUNDACIÓN INMINENTE:
+            </h4>
+            <ol>
+              <li><strong>LLAMAR A DEFENSA CIVIL: 103</strong></li>
+              <li>EVACUAR ZONAS BAJAS</li>
+              <li>CORTAR LUZ Y GAS</li>
+              <li>SEGUIR INSTRUCCIONES OFICIALES</li>
+            </ol>
+          </div>
+
+          <!-- Contacts Grid -->
+          <div class="contacts-grid">
+            <div class="contact-section">
+              <h4>Nacionales/Provinciales</h4>
+              <p>
+                <strong>911</strong> - Emergencias<br />
+                <strong>103</strong> - Defensa Civil<br />
+                <strong>107</strong> - SAME<br />
+                <strong>100</strong> - Bomberos<br />
+                <strong>106</strong> - Prefectura
+              </p>
+            </div>
+            <div class="contact-section">
+              <h4>Municipales</h4>
+              <p>
+                Tigre: <strong>4749-0555</strong><br />
+                S. Fernando: <strong>4746-6133</strong><br />
+                S. Isidro: <strong>4512-3100</strong><br />
+                V. López: <strong>4795-2044</strong>
+              </p>
+            </div>
+          </div>
+
+          <!-- Water Organizations -->
+          <div class="contact-section" style="margin-bottom: var(--spacing-md)">
+            <h4>
+              <i data-lucide="droplets" class="icon-xs"></i> Organismos Hídricos
+            </h4>
+            <p>
+              <strong>INA:</strong> 011-4328-0720<br />
+              <strong>SHN:</strong> (011) 4301-0062 / 4301-0064 / 4301-0066 /
+              4301-0067<br />
+              Email: pronomarea@hidro.gov.ar
+            </p>
+          </div>
+
+          <!-- Links -->
+          <div class="links-section">
+            <h4><i data-lucide="globe" class="icon-xs"></i> Sitios de Datos</h4>
+            <ul class="links-list">
+              <li>
+                <a
+                  href="https://www.comisionriodelaplata.org/servicios_main.php?sid=VM"
+                  target="_blank"
+                  >Comisión Río de la Plata (Pilote Norden)</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.ina.gov.ar/alerta/index.php?seccion=10"
+                  target="_blank"
+                  >INA - Sistema de Alertas</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.molol.com/rio/viento-norden.html"
+                  target="_blank"
+                  >Viento Pilote Norden - Molol</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.hidro.gov.ar/oceanografia/AACRIOPLA.asp"
+                  target="_blank"
+                  >Hidrografía Naval - Río de la Plata</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.hidro.gob.ar/smara/MAlturaTotal.asp?op=3"
+                  target="_blank"
+                  >Hidrografía - Altura Total</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://www.hidro.gob.ar/oceanografia/alturashorarias.asp"
+                  target="_blank"
+                  >Hidrografía - Alturas Horarias</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Info Note -->
+          <div class="info-note">
+            <strong
+              ><i data-lucide="info" class="icon-xs"></i> Esta web es un
+              proyecto independiente.</strong
+            ><br />
+            Los datos provienen de fuentes oficiales, salvo la altura
+            pronosticada para Tigre durante una sudestada, que corresponde a la
+            altura máxima registrada en el Pilote Norden más 35cm que suelen
+            observarse en promedio. En emergencias, siga siempre instrucciones
+            de autoridades.
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SUPPORT BUTTON ==================== -->
+      <a
+        href="http://link.mercadopago.com.ar/alturadelrio"
+        class="support-button"
+        target="_blank"
+      >
+        <img
+          src="https://http2.mlstatic.com/frontend-assets/ui-navigation/5.18.9/mercadopago/logo__large@2x.png"
+          alt="MercadoPago"
+        />
+        <span>Apoyar este proyecto</span>
+      </a>
+
+      <!-- ==================== FOOTER ==================== -->
+      <footer class="dashboard-footer">
+        <p>Marea Tigre &copy; 2026 - Datos actualizados cada 5 minutos</p>
+      </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/ui.js"></script>
+    <script src="/static/js/components.js"></script>
+    <script src="/static/js/app.js"></script>
+  </body>
+</html>
